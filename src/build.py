@@ -4,7 +4,7 @@ Usage:  python3 src/build.py        (quiet)
         python3 src/build.py -v     (print warnings + attestation report)
 Run scripts/fetch_web.sh first to download the WEB text into web/.
 """
-import re, json, collections, sys, pathlib
+import re, json, collections, sys, pathlib, shutil
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 from data import PEOPLE, LINKS
@@ -94,6 +94,7 @@ tpl=(ROOT/'src'/'template.html').read_text(encoding='utf-8')
 assert "/*DATA*/" in tpl
 (ROOT/'dist').mkdir(exist_ok=True)
 (ROOT/'dist'/'index.html').write_text(tpl.replace("/*DATA*/",blob),encoding='utf-8')
+shutil.copyfile(ROOT/'assets'/'og.png', ROOT/'dist'/'og.png')
 hard=[w for w in warn if w.startswith(("NO MATCH","EMPTY","OVERLAP"))]
 if '-v' in sys.argv:
     for w in warn: print(w)
