@@ -2,3 +2,5 @@ web/
 __pycache__/
 tests/shots/
 *.pyc
+.vercel
+.env*

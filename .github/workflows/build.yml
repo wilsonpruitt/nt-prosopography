@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Fetch WEB text
+        run: scripts/fetch_web.sh
+      - name: Build dist/index.html
+        run: python3 src/build.py -v
+      - name: Check dist/index.html is up to date
+        run: |
+          if ! git diff --quiet -- dist/index.html; then
+            echo "::error::dist/index.html is stale. Run 'python3 src/build.py' and commit the result."
+            git diff --stat -- dist/index.html
+            exit 1
+          fi
