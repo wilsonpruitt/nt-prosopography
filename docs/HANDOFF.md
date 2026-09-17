@@ -1,0 +1,99 @@
+# Handoff: state, decisions, backlog
+
+Prototype built in a Claude chat session on 2026-09-16/17 and published as a
+claude.ai artifact. This repo is that prototype restructured so the build is one
+command and deterministic. `dist/index.html` is the published page.
+
+## The brief (Wilson's words, condensed)
+
+An interactive "biography" of the New Testament that connects names across books,
+using the WEB translation, focused on Acts and the epistles and especially the
+salutations that close Paul's letters. Each name colored by attestation; names
+with multiple attestation linked to each other. Delivered as HTML.
+
+## What exists
+
+- 169 people, 466 name-bearing verses, Acts through Jude. 79 Acts only, 65 one
+  letter, 8 several letters, 17 Acts and letters.
+- Hero: Romans 16:21–23 rendered live, every name tappable.
+- Thread map: one row per book, one dot per person named; selecting a person
+  draws an SVG thread through their dots, dashed lines to conjectural identities.
+- Three tabs: By book (chips + "Read the verses" with inline names), All names
+  (search over names and aka), Across books (grid of everyone in 2+ books, column
+  groups by corpus).
+- Detail panel (bottom sheet on phones, sticky column on desktop): description,
+  attestation by corpus, conjecture cards, verses by book, co-named people
+  (same verse = weight 2, adjacent verse = 1, top 14).
+- Legend buttons filter by attestation class everywhere.
+
+## Editorial decisions already made (change deliberately, not by accident)
+
+| Decision | Why |
+|---|---|
+| Scope is Acts–Jude; Gospels and Revelation excluded | The brief. `gospels=True` only flags "also named in the Gospels". |
+| Jesus, OT figures, angels, "Caesar" excluded | Contemporaries named as persons only. Claudius and Aretas are in. |
+| Secure identities merged, conjectures linked | See CLAUDE.md rule 4. Eleven links exist in `LINKS`. |
+| 2 Tim 4:20 Erastus filed with the Acts 19:22 assistant | Arguable: "remained at Corinth" could point to the treasurer of Rom 16:23. Noted in both entries. A three-way split is the stricter option. |
+| Alexander of 1 Tim 1:20 and the coppersmith of 2 Tim 4:14 kept separate, linked `probable` | Same reasoning as above: do not inflate attestation. |
+| Pilate is class `both` via 1 Tim 6:13 | Mechanically correct, maybe not what "cross-attested associate" should mean. See backlog item 2. |
+| Corpus grouping: undisputed Paul (Rom, 1–2 Cor, Gal, Phil, 1 Thess, Phlm), disputed (Eph, Col, 2 Thess), Pastorals, Hebrews + catholic letters | Shown in the panel and grid headers only; not yet part of the color. |
+| Aquila and Prisca are two entries | They are two people; co-naming shows the pairing. |
+
+Wilson prefers sharp analytical distinctions over blended ones, primary sources
+over secondary, and direct disagreement where warranted. When a call is arguable,
+make it, say why in `desc` or the link note, and flag it in the PR description.
+
+## Backlog, in suggested order
+
+1. **Project hygiene.** `git init`, commit as is, add a GitHub Action that runs
+   `fetch_web.sh`, `build.py`, and fails on hard warnings. Decide hosting
+   (GitHub Pages or a Wroot Press subdomain).
+2. **Attestation by corpus.** Replace or supplement the four-color scheme with
+   independent-corpus attestation: Acts / undisputed Paul / disputed Paul /
+   Pastorals / catholic. Proposal: keep four hues, add a count of independent
+   corpora as a second visual channel (ring segments on dots, small numeral on
+   chips). Separate "associates" from "public figures" (Pilate, Claudius, Aretas,
+   Gallio, Felix...) with a `kind` field so Pilate stops reading as a Pauline
+   cross-attestation. Ask Wilson before changing the color semantics.
+3. **Roles in the salutations.** Add a per-reference `role` for letters:
+   co-sender, addressee, greeted, sends greetings, carrier/commended, scribe,
+   opponent, mentioned. This is the heart of the brief (the salutations) and
+   enables a view of each letter's closing as a cast list. Data entry is small:
+   about 150 letter references.
+4. **Greek name forms.** Add `greek` per person (NA28/SBLGNT nominative, polytonic;
+   Gentium Book Plus already covers it). Source from the SBLGNT text
+   programmatically (CC BY 4.0) rather than from memory, and note Majority Text
+   variants where WEB's English reflects them. Make Greek searchable.
+5. **Places.** `place` field(s) per person (Corinth, Ephesus, Colossae, Rome...)
+   and a filter. Possible later tie-in with Wilson's Topographia Sacra project;
+   do not couple the repos yet.
+6. **Kinship and household relations** as typed edges distinct from identity
+   conjectures: spouse, sibling, parent, cousin, household, host. Currently only
+   in `desc` prose.
+7. **Deep links.** `#p=<id>` selects a person on load; `#b=<code>` scrolls to a
+   book. Update hash on select. Needed before sharing links to entries.
+8. **Extend scope** to the Gospels and Revelation behind a toggle, keeping
+   Acts–Jude as the default. Large disambiguation job (Marys, Simons, Judases).
+9. **Accessibility pass.** Arrow-key navigation in the thread map, focus return
+   when the sheet closes, `aria-live` politeness check, contrast check on the
+   ochre token in light mode.
+10. **Tests.** Assert counts (people, verses, per-class) in a small pytest so data
+    edits that change them are visible in review. Snapshot `dist/index.html` size.
+
+## Known rough edges
+
+- On phones the bottom sheet covers most of the thread map when a dot is tapped.
+  Consider a collapsed "peek" state for the sheet.
+- `verseHTML` highlights every match of a person's pattern in a verse. Fine now;
+  check again after adding Gospel-scope Jameses and Marys.
+- The grid omits single-book people by design; there is no toggle yet.
+- Acts "Read the verses" renders about 330 verses at once. Acceptable; could be
+  chapter accordions.
+- Descriptions were written in one pass by the assistant and spot-checked, not
+  reviewed line by line by Wilson. References are machine-verified; prose is not.
+
+## Sources and licenses
+
+- WEB text: eBible.org `engwebp_vpl.zip`, public domain. Not committed; fetched.
+- Fonts: Gentium Book Plus (SIL OFL), Source Sans 3 (OFL), via Google Fonts.
+- No other third-party code.
