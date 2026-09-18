@@ -18,12 +18,14 @@ with multiple attestation linked to each other. Delivered as HTML.
 - Hero: Romans 16:21–23 rendered live, every name tappable.
 - Thread map: one row per book, one dot per person named; selecting a person
   draws an SVG thread through their dots, dashed lines to conjectural identities.
-- Three tabs: By book (chips + "Read the verses" with inline names), All names
-  (search over names and aka), Across books (grid of everyone in 2+ books, column
-  groups by corpus).
+- Three tabs: By book (a role-grouped cast list for letters with role data, a
+  flat chip list for Acts and any book without it, plus "Read the verses" with
+  inline names), All names (search over names and aka), Across books (grid of
+  associates in 2+ books, `kind="official"` excluded, column groups by corpus).
 - Detail panel (bottom sheet on phones, sticky column on desktop): description,
-  attestation by corpus, conjecture cards, verses by book, co-named people
-  (same verse = weight 2, adjacent verse = 1, top 14).
+  attestation by corpus, conjecture cards, verses by book (role shown next to
+  the book heading when set), co-named people (same verse = weight 2, adjacent
+  verse = 1, top 14).
 - Legend buttons filter by attestation class everywhere.
 
 ## Editorial decisions already made (change deliberately, not by accident)
@@ -62,11 +64,29 @@ make it, say why in `desc` or the link note, and flag it in the PR description.
    Pastorals / catholic — deferred because today it would only ever display a
    "2" on one person (Pilate); revisit if scope extends to the Gospels (item
    8), where public figures and cross-attestation both multiply.
-3. **Roles in the salutations.** Add a per-reference `role` for letters:
-   co-sender, addressee, greeted, sends greetings, carrier/commended, scribe,
-   opponent, mentioned. This is the heart of the brief (the salutations) and
-   enables a view of each letter's closing as a cast list. Data entry is small:
-   about 150 letter references.
+3. ~~**Roles in the salutations.**~~ Done 2026-09-17: added `roles={book:role}`
+   to `P()` — one role per (person, letter), not literally per verse: co-sender,
+   addressee, carrier, scribe, sendsgreetings, greeted, opponent; unlisted is
+   "mentioned" (default, no entry needed). 94 (person, book) assignments across
+   68 people, sourced from the opening/closing verses themselves (dumped and
+   read directly from `web/`, never from memory — see the extraction method in
+   the PR). `build.py` validates every role against a fixed taxonomy and against
+   the person's actual attestation (a role on a book they don't appear in, or
+   on `ACT`, is now a hard `BAD ROLE` build failure). Solo letter-authors (Paul,
+   James, Peter, Jude) get no role in their own letter — the taxonomy is for
+   people appearing as characters in someone else's letter. The "By book" tab
+   now renders a genuine cast list per letter (grouped by role, "Also named"
+   catch-all) instead of a flat chip list, and the detail panel shows the role
+   next to each book heading. Worth a look: Romans 16, Colossians 4, Philemon.
+   **Judgment calls worth knowing about, not re-litigating:** Phygelus, Hermogenes,
+   and Demas-in-2-Timothy are filed `opponent` for desertion/worldliness, not
+   only false teaching — the taxonomy has no separate "deserted" bucket and
+   filing them `mentioned` would misfile them next to neutral figures like
+   Chloe. Household heads named only via their household being greeted
+   (Aristobulus, Narcissus) stay `mentioned`, not `greeted` — they aren't
+   personally addressed. Demetrius in 3 John is `carrier`, following the
+   common reading that 3 John's closing testimonial doubles as this letter's
+   own bearer's commendation; the text doesn't say so outright.
 4. **Greek name forms.** Add `greek` per person (NA28/SBLGNT nominative, polytonic;
    Gentium Book Plus already covers it). Source from the SBLGNT text
    programmatically (CC BY 4.0) rather than from memory, and note Majority Text

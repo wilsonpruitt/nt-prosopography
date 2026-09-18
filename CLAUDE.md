@@ -16,7 +16,7 @@ python3 src/build.py -v     # build dist/index.html; -v prints warnings + attest
 python3 tests/shot.py       # Playwright smoke test: phone + desktop, writes tests/shots/*.png
 ```
 
-`build.py` exits 1 on NO MATCH / EMPTY / OVERLAP warnings. Treat those as failures.
+`build.py` exits 1 on NO MATCH / EMPTY / OVERLAP / BAD ROLE warnings. Treat those as failures.
 UNCLAIMED warnings list ambiguous names (John, James, Simon...) found in the text
 that no entry claims. Each one must be either claimed or knowingly out of scope
 (the remaining ones are Old Testament figures and "Herod's palace").

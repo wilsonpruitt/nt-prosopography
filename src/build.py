@@ -77,6 +77,7 @@ links=collections.defaultdict(list)
 for a,b,st,note in LINKS:
     links[a].append(dict(to=b,strength=st,note=note)); links[b].append(dict(to=a,strength=st,note=note))
 pidx={p['id']:i for i,p in enumerate(PEOPLE)}  # deterministic tie-break
+VALID_ROLES={'cosender','addressee','carrier','scribe','sendsgreetings','greeted','opponent'}
 out=[]
 for p in PEOPLE:
     refs=prefs[p['id']]
@@ -84,7 +85,11 @@ for p in PEOPLE:
     bks=sorted({parse(k)[0] for k in refs},key=order.get)
     inacts='ACT' in bks; nl=len([b for b in bks if b!='ACT'])
     cls='both' if inacts and nl else 'letters' if nl>=2 else 'letter' if nl==1 else 'acts'
-    out.append(dict(id=p['id'],name=p['name'],aka=p['aka'],desc=p['desc'],gospels=p['gospels'],cls=cls,kind=p['kind'],books=bks,refs=refs,
+    for rb,role in p['roles'].items():
+        if role not in VALID_ROLES: warn.append(f"BAD ROLE {p['id']} {rb}: {role!r} not in {sorted(VALID_ROLES)}")
+        if rb=='ACT': warn.append(f"BAD ROLE {p['id']}: role set on ACT, roles are letters-only")
+        elif rb not in bks: warn.append(f"BAD ROLE {p['id']} {rb}: not attested in that book ({bks})")
+    out.append(dict(id=p['id'],name=p['name'],aka=p['aka'],desc=p['desc'],gospels=p['gospels'],cls=cls,kind=p['kind'],books=bks,refs=refs,roles=p['roles'],
         links=links.get(p['id'],[]),co=[x for x,_ in sorted(co[p['id']].items(),key=lambda kv:(-kv[1],pidx[kv[0]]))[:14]]))
 used={k for p in out for k in p['refs']}
 verses={k:dict(t=V[k],m=[[s,e,pid] for s,e,pid in final[k]]) for k in keys if k in used}
@@ -95,7 +100,7 @@ assert "/*DATA*/" in tpl
 (ROOT/'dist').mkdir(exist_ok=True)
 (ROOT/'dist'/'index.html').write_text(tpl.replace("/*DATA*/",blob),encoding='utf-8')
 shutil.copyfile(ROOT/'assets'/'og.png', ROOT/'dist'/'og.png')
-hard=[w for w in warn if w.startswith(("NO MATCH","EMPTY","OVERLAP"))]
+hard=[w for w in warn if w.startswith(("NO MATCH","EMPTY","OVERLAP","BAD ROLE"))]
 if '-v' in sys.argv:
     for w in warn: print(w)
     print(len(out),'people',len(verses),'verses',len(blob)//1024,'KB')

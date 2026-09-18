@@ -107,6 +107,8 @@ h2{font-size:1.4rem;font-weight:400;margin:0 0 .25rem}
 h3{font-size:1.3rem;font-weight:400;margin:0}
 .bookhead span{font-family:var(--sans);font-size:.8125rem;color:var(--muted);white-space:nowrap}
 .chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.castgroup{margin:0 0 .7rem}
+.castgroup h4{font-family:var(--sans);font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin:0 0 .4rem}
 .chip{font-family:var(--sans);font-size:.875rem;line-height:1.2;display:inline-flex;align-items:baseline;gap:.4rem;padding:.4rem .7rem;border:1.5px solid var(--c);border-radius:999px;background:var(--surface);text-align:left}
 .chip.conj{border-style:dashed}
 .chip small{font-size:.6875rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -229,6 +231,8 @@ footer p{margin:0 0 .6rem}
 const DATA = /*DATA*/;
 const CLS = {both:["Acts and letters","named in Acts and in at least one letter"],letters:["Several letters","named in two or more letters, never in Acts"],letter:["One letter","named in a single letter"],acts:["Acts only","named in Acts and nowhere in the letters"]};
 const CORPUS = {acts:"Acts",paul:"undisputed letters of Paul",disputed:"disputed letters of Paul",pastoral:"Pastoral letters",catholic:"Hebrews and the catholic letters"};
+const ROLE_ORDER = ["cosender","addressee","carrier","scribe","sendsgreetings","greeted","opponent"];
+const ROLE_LABELS = {cosender:"Co-sender",addressee:"Addressee",carrier:"Carrier or commended",scribe:"Scribe",sendsgreetings:"Sends greetings",greeted:"Greeted",opponent:"Opponent"};
 const ONECH = new Set(["PHM","2JO","3JO","JUD"]);
 const P = Object.fromEntries(DATA.people.map(p=>[p.id,p]));
 const B = Object.fromEntries(DATA.books.map((b,i)=>[b.code,Object.assign(b,{i})]));
@@ -274,8 +278,22 @@ const plural=(n,w)=>n+" "+w+(n===1?"":"s");
 (function(){
   $("#v-books").innerHTML=DATA.books.filter(b=>inBook[b.code].length).map(b=>{
     const ps=inBook[b.code]; const nv=new Set(ps.flatMap(p=>p.byBook[b.code])).size;
+    const hasRoles=ps.some(p=>p.roles&&p.roles[b.code]);
+    let cast;
+    if(hasRoles){
+      const used=new Set();
+      const groups=ROLE_ORDER.map(r=>{
+        const in_=ps.filter(p=>p.roles&&p.roles[b.code]===r);
+        in_.forEach(p=>used.add(p.id));
+        return in_.length?`<div class="castgroup"><h4>${ROLE_LABELS[r]}</h4><div class="chips">${in_.map(p=>chip(p,shortRef(p.byBook[b.code][0]))).join("")}</div></div>`:"";
+      }).join("");
+      const rest=ps.filter(p=>!used.has(p.id));
+      cast=groups+(rest.length?`<div class="castgroup"><h4>Also named</h4><div class="chips">${rest.map(p=>chip(p,shortRef(p.byBook[b.code][0]))).join("")}</div></div>`:"");
+    } else {
+      cast=`<div class="chips">${ps.map(p=>chip(p,shortRef(p.byBook[b.code][0]))).join("")}</div>`;
+    }
     return `<article class="book" id="book-${b.code}"><div class="bookhead"><h3>${b.name}</h3><span>${plural(ps.length,"name")} in ${plural(nv,"verse")}</span></div>
-    <div class="chips">${ps.map(p=>chip(p,shortRef(p.byBook[b.code][0]))).join("")}</div>
+    ${cast}
     <button class="more" data-verses="${b.code}" aria-expanded="false">Read the verses</button><div class="vhost"></div></article>`}).join("");
 })();
 function bookVerses(code){
@@ -317,8 +335,8 @@ function renderPanel(){
   <p class="desc">${esc(p.desc)}</p>
   <p class="att">${plural(p.refs.length,"verse")} in ${plural(p.books.length,"book")}: ${corp.join("; ")}.</p>`;
   if(p.links.length){h+=`<h4>May be the same person</h4>`+p.links.map(l=>`<div class="link">${chip(P[l.to])}<span class="st">${l.strength}</span><p>${esc(l.note)}</p></div>`).join("")}
-  p.books.forEach(c=>{const ks=p.byBook[c], cap=6, long=ks.length>cap+2;
-    h+=`<h4>${B[c].name}<span>${plural(ks.length,"verse")}</span></h4><ul class="verses">`+ks.map((k,i)=>`<li${long&&i>=cap?" hidden":""}><span class="ref">${shortRef(k)}</span><span>${verseHTML(k)}</span></li>`).join("")+`</ul>`+(long?`<button class="more" data-all>Show all ${ks.length} verses in ${B[c].name}</button>`:"")});
+  p.books.forEach(c=>{const ks=p.byBook[c], cap=6, long=ks.length>cap+2, role=p.roles&&p.roles[c];
+    h+=`<h4>${B[c].name}<span>${role?ROLE_LABELS[role]+" &middot; ":""}${plural(ks.length,"verse")}</span></h4><ul class="verses">`+ks.map((k,i)=>`<li${long&&i>=cap?" hidden":""}><span class="ref">${shortRef(k)}</span><span>${verseHTML(k)}</span></li>`).join("")+`</ul>`+(long?`<button class="more" data-all>Show all ${ks.length} verses in ${B[c].name}</button>`:"")});
   if(p.co.length){h+=`<h4>Named in the same or the next verse</h4><div class="chips">${p.co.map(id=>chip(P[id])).join("")}</div>`}
   el.innerHTML=h; side.classList.add("open"); side.scrollTop=0;
 }
