@@ -57,7 +57,7 @@ that no entry claims. Each one must be either claimed or knowingly out of scope
 ## Data model cheat sheet
 
 ```python
-P(id, name, desc, pats, refs=None, aka=None, gospels=False, exclude=None)
+P(id, name, desc, pats, refs=None, aka=None, gospels=False, exclude=None, kind="associate")
 ```
 - `pats`: regexes in WEB spelling. Longest match wins when spans overlap.
 - `refs=None`: every match in Acts–Jude. Otherwise a list of `"ACT 12:12"`,
@@ -65,4 +65,11 @@ P(id, name, desc, pats, refs=None, aka=None, gospels=False, exclude=None)
 - Book codes are eBible's: `ACT ROM 1CO 2CO GAL EPH PHI COL 1TH 2TH 1TI 2TI TIT
   PHM HEB JAM 1PE 2PE 1JO 2JO 3JO JUD` (note PHI, JAM, 1JO).
 - Attestation class is computed: `both` (Acts + ≥1 letter), `letters` (≥2 letters,
-  no Acts), `letter` (1 letter), `acts`.
+  no Acts), `letter` (1 letter), `acts`. Never edited by hand.
+- `kind="official"` marks a Roman/Herodian/Nabataean state figure (governor, king,
+  emperor, tribune) who is never a believer or co-worker — Pilate, Claudius, the
+  Herods, Felix, Festus, Gallio, Aretas, etc. Excluded from the "Across books"
+  grid so an incidental mention (e.g. Pilate in 1 Tim 6:13) doesn't read as a
+  cross-corpus associate. Does not affect `cls`, which stays mechanically honest.
+  A believing or hospitable contemporary (Sergius Paulus, Publius) stays the
+  default `"associate"`.

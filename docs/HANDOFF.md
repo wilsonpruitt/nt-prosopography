@@ -35,7 +35,7 @@ with multiple attestation linked to each other. Delivered as HTML.
 | Secure identities merged, conjectures linked | See CLAUDE.md rule 4. Eleven links exist in `LINKS`. |
 | 2 Tim 4:20 Erastus filed with the Acts 19:22 assistant | Arguable: "remained at Corinth" could point to the treasurer of Rom 16:23. Noted in both entries. A three-way split is the stricter option. |
 | Alexander of 1 Tim 1:20 and the coppersmith of 2 Tim 4:14 kept separate, linked `probable` | Same reasoning as above: do not inflate attestation. |
-| Pilate is class `both` via 1 Tim 6:13 | Mechanically correct, maybe not what "cross-attested associate" should mean. See backlog item 2. |
+| Pilate is class `both` via 1 Tim 6:13, but `kind="official"` keeps him out of the Across-books grid | The attestation math is honest and stays visible in his own panel; the grid is specifically about associates, and a confessional aside naming a Roman prefect isn't that. `kind="official"` also covers Claudius, Herod Antipas, Herod Agrippa I, Gallio, Claudius Lysias, Felix, Festus, Drusilla, Agrippa II, Bernice, Aretas — state figures who never appear as believers or co-workers. Sergius Paulus and Publius stay `associate`: one believes, the other hosts Paul. |
 | Corpus grouping: undisputed Paul (Rom, 1–2 Cor, Gal, Phil, 1 Thess, Phlm), disputed (Eph, Col, 2 Thess), Pastorals, Hebrews + catholic letters | Shown in the panel and grid headers only; not yet part of the color. |
 | Aquila and Prisca are two entries | They are two people; co-naming shows the pairing. |
 
@@ -45,16 +45,23 @@ make it, say why in `desc` or the link note, and flag it in the PR description.
 
 ## Backlog, in suggested order
 
-1. **Project hygiene.** `git init`, commit as is, add a GitHub Action that runs
-   `fetch_web.sh`, `build.py`, and fails on hard warnings. Decide hosting
-   (GitHub Pages or a Wroot Press subdomain).
-2. **Attestation by corpus.** Replace or supplement the four-color scheme with
-   independent-corpus attestation: Acts / undisputed Paul / disputed Paul /
-   Pastorals / catholic. Proposal: keep four hues, add a count of independent
-   corpora as a second visual channel (ring segments on dots, small numeral on
-   chips). Separate "associates" from "public figures" (Pilate, Claudius, Aretas,
-   Gallio, Felix...) with a `kind` field so Pilate stops reading as a Pauline
-   cross-attestation. Ask Wilson before changing the color semantics.
+1. ~~**Project hygiene.**~~ Done 2026-09-17: `git init`, pushed to
+   `github.com/wilsonpruitt/nt-prosopography` (public), GitHub Action rebuilds
+   from source on every push/PR and fails if `dist/index.html` drifts. Hosted
+   on Vercel (project `nt-prosopography`), live at `ntnames.wrootpress.com`.
+2. **Attestation by corpus.** Partly done 2026-09-17: added a `kind` field
+   (`"associate"` default, `"official"` for Pilate, Claudius, Herod Antipas,
+   Herod Agrippa I, Gallio, Claudius Lysias, Felix, Festus, Drusilla, Agrippa
+   II, Bernice, Aretas) and excluded `kind="official"` from the "Across books"
+   grid, so a governor named once in a letter's aside no longer reads as a
+   cross-corpus associate. Attestation color/class (`cls`) is untouched —
+   still mechanically `both`/`letters`/`letter`/`acts`, still shown honestly
+   in the detail panel; only the grid's associate list changed. **Still open:**
+   the independent-corpus-count second visual channel (ring segments on dots,
+   small numeral on chips) for Acts / undisputed Paul / disputed Paul /
+   Pastorals / catholic — deferred because today it would only ever display a
+   "2" on one person (Pilate); revisit if scope extends to the Gospels (item
+   8), where public figures and cross-attestation both multiply.
 3. **Roles in the salutations.** Add a per-reference `role` for letters:
    co-sender, addressee, greeted, sends greetings, carrier/commended, scribe,
    opponent, mentioned. This is the heart of the brief (the salutations) and

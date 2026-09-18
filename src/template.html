@@ -209,7 +209,7 @@ footer p{margin:0 0 .6rem}
     <div id="plist"></div>
    </section>
    <section id="v-grid" role="tabpanel" aria-labelledby="t-grid" hidden>
-    <p class="sub">Everyone named in two or more books. Numbers count the verses that use the name.</p>
+    <p class="sub">Associates named in two or more books — governors, kings and emperors are left out even where a letter mentions one in passing. Numbers count the verses that use the name.</p>
     <div class="gridwrap"><table id="grid"></table></div>
    </section>
 
@@ -297,7 +297,7 @@ $("#search").addEventListener("input",renderPeople);
 
 /* grid view */
 function renderGrid(){
-  const rows=DATA.people.filter(p=>p.books.length>1&&!hiddenCls.has(p.cls)).sort((a,b)=>b.books.length-a.books.length||b.refs.length-a.refs.length);
+  const rows=DATA.people.filter(p=>p.books.length>1&&p.kind!=="official"&&!hiddenCls.has(p.cls)).sort((a,b)=>b.books.length-a.books.length||b.refs.length-a.refs.length);
   let prev=""; const head=DATA.books.map(b=>{const g=b.corpus!==prev;prev=b.corpus;return `<th class="${g?"grp":""}" title="${CORPUS[b.corpus]}"><span>${b.abbr}</span></th>`}).join("");
   $("#grid").innerHTML=`<thead><tr><th></th>${head}</tr></thead><tbody>`+rows.map(p=>{
     const idx=p.books.map(c=>B[c].i), lo=Math.min(...idx), hi=Math.max(...idx);

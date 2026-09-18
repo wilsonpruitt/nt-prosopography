@@ -84,7 +84,7 @@ for p in PEOPLE:
     bks=sorted({parse(k)[0] for k in refs},key=order.get)
     inacts='ACT' in bks; nl=len([b for b in bks if b!='ACT'])
     cls='both' if inacts and nl else 'letters' if nl>=2 else 'letter' if nl==1 else 'acts'
-    out.append(dict(id=p['id'],name=p['name'],aka=p['aka'],desc=p['desc'],gospels=p['gospels'],cls=cls,books=bks,refs=refs,
+    out.append(dict(id=p['id'],name=p['name'],aka=p['aka'],desc=p['desc'],gospels=p['gospels'],cls=cls,kind=p['kind'],books=bks,refs=refs,
         links=links.get(p['id'],[]),co=[x for x,_ in sorted(co[p['id']].items(),key=lambda kv:(-kv[1],pidx[kv[0]]))[:14]]))
 used={k for p in out for k in p['refs']}
 verses={k:dict(t=V[k],m=[[s,e,pid] for s,e,pid in final[k]]) for k in keys if k in used}

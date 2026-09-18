@@ -1,7 +1,11 @@
 # Each person: id, name, aka, desc, pats (regexes in WEB spelling), refs (None = every match in Acts–Jude;
 # otherwise list of "BOOK c:v", "BOOK c:v-v" or (range, pattern-override)), gospels flag.
-def P(id, name, desc, pats, refs=None, aka=None, gospels=False, exclude=None):
-    return dict(id=id, name=name, desc=desc, pats=pats, refs=refs, aka=aka or [], gospels=gospels, exclude=exclude or [])
+# kind: "associate" (default) or "official" — Roman/Herodian/Nabataean state figures who
+# interact with the movement only as rulers or judges, never as believers or co-workers.
+# Officials are excluded from the "Across books" grid: a governor named once in a letter's
+# aside is not a cross-corpus associate, even when the attestation math says "both".
+def P(id, name, desc, pats, refs=None, aka=None, gospels=False, exclude=None, kind="associate"):
+    return dict(id=id, name=name, desc=desc, pats=pats, refs=refs, aka=aka or [], gospels=gospels, exclude=exclude or [], kind=kind)
 
 PEOPLE = [
  # ---- the major figures
@@ -35,8 +39,8 @@ PEOPLE = [
  P("joseph_barsabbas","Joseph Barsabbas Justus","Candidate, with Matthias, to replace Judas.",[r"Joseph called Barsabbas, who was also called Justus"],refs=["ACT 1:23"],aka=["Justus"]),
  P("matthias","Matthias","Chosen by lot to be numbered with the eleven.",[r"\bMatthias\b"]),
  P("john_baptist","John the Baptizer","Recalled in the speeches of Acts; his disciples are still found at Ephesus in Acts 19.",[r"\bJohn\b"],refs=["ACT 1:5","ACT 1:22","ACT 10:37","ACT 11:16","ACT 13:24-25","ACT 18:25","ACT 19:3-4"],gospels=True),
- P("pilate","Pontius Pilate","Prefect of Judea. Named in three Acts speeches and once in 1 Timothy, the only mention of him in any letter.",[r"Pontius Pilate",r"\bPilate\b"],gospels=True),
- P("herod_antipas","Herod the tetrarch","Antipas, ruler of Galilee; named in the believers' prayer and as foster brother of Manaen.",[r"\bHerod\b"],refs=["ACT 4:27","ACT 13:1"],gospels=True),
+ P("pilate","Pontius Pilate","Prefect of Judea. Named in three Acts speeches and once in 1 Timothy, the only mention of him in any letter.",[r"Pontius Pilate",r"\bPilate\b"],gospels=True,kind="official"),
+ P("herod_antipas","Herod the tetrarch","Antipas, ruler of Galilee; named in the believers' prayer and as foster brother of Manaen.",[r"\bHerod\b"],refs=["ACT 4:27","ACT 13:1"],gospels=True,kind="official"),
 
  # ---- Acts 4–9
  P("annas","Annas","High priest, head of the family before whom Peter and John are examined.",[r"\bAnnas\b"],gospels=True),
@@ -66,8 +70,8 @@ PEOPLE = [
  # ---- Acts 10–15
  P("cornelius","Cornelius","Centurion of the Italian Regiment at Caesarea; first Gentile household baptized.",[r"\bCornelius\b"]),
  P("agabus","Agabus","Prophet from Judea; foretells the famine and, later, Paul's arrest.",[r"\bAgabus\b"]),
- P("claudius_emp","Claudius","Emperor (41–54); the famine and the expulsion of Jews from Rome are dated to his reign.",[r"\bClaudius\b"],refs=["ACT 11:28","ACT 18:2"]),
- P("herod_agrippa1","Herod Agrippa I","King of Judea (41–44); kills James, imprisons Peter, dies at Caesarea.",[r"\bHerod\b"],refs=["ACT 12:1-23"]),
+ P("claudius_emp","Claudius","Emperor (41–54); the famine and the expulsion of Jews from Rome are dated to his reign.",[r"\bClaudius\b"],refs=["ACT 11:28","ACT 18:2"],kind="official"),
+ P("herod_agrippa1","Herod Agrippa I","King of Judea (41–44); kills James, imprisons Peter, dies at Caesarea.",[r"\bHerod\b"],refs=["ACT 12:1-23"],kind="official"),
  P("mary_mark","Mary of Jerusalem","Mother of John Mark; the assembly prays in her house.",[r"\bMary\b"],refs=["ACT 12:12"]),
  P("rhoda","Rhoda","Servant girl who answers Peter's knock.",[r"\bRhoda\b"]),
  P("blastus","Blastus","Chamberlain of Herod Agrippa.",[r"\bBlastus\b"]),
@@ -85,7 +89,7 @@ PEOPLE = [
  P("damaris","Damaris","Woman who believes at Athens.",[r"\bDamaris\b"]),
  P("justus_corinth","Justus of Corinth","God-fearer next door to the synagogue, whose house Paul uses. Other manuscripts read Titius Justus; WEB follows the Majority Text.",[r"\bJustus\b"],refs=["ACT 18:7"],aka=["Titius Justus"]),
  P("crispus","Crispus","Ruler of the Corinthian synagogue who believes with his household; one of the few Paul baptized himself.",[r"\bCrispus\b"]),
- P("gallio","Gallio","Proconsul of Achaia who dismisses the case against Paul; the Delphi inscription fixes his term near 51–52.",[r"\bGallio\b"]),
+ P("gallio","Gallio","Proconsul of Achaia who dismisses the case against Paul; the Delphi inscription fixes his term near 51–52.",[r"\bGallio\b"],kind="official"),
  P("sosthenes_acts","Sosthenes the synagogue ruler","Beaten before Gallio's judgment seat at Corinth.",[r"\bSosthenes\b"],refs=["ACT 18:17"]),
  P("tyrannus","Tyrannus","Owner or teacher of the lecture hall Paul uses for two years at Ephesus.",[r"\bTyrannus\b"]),
  P("sceva","Sceva","Jewish chief priest whose seven sons attempt an exorcism in Jesus' name.",[r"\bSceva\b"]),
@@ -103,14 +107,14 @@ PEOPLE = [
 
  # ---- Acts 21–28
  P("mnason","Mnason of Cyprus","Early disciple with whom Paul's party lodges.",[r"\bMnason\b"]),
- P("claudius_lysias","Claudius Lysias","Tribune commanding the Jerusalem garrison; his letter to Felix is quoted.",[r"Claudius Lysias",r"\bLysias\b"],refs=["ACT 23:26","ACT 24:22"]),
+ P("claudius_lysias","Claudius Lysias","Tribune commanding the Jerusalem garrison; his letter to Felix is quoted.",[r"Claudius Lysias",r"\bLysias\b"],refs=["ACT 23:26","ACT 24:22"],kind="official"),
  P("ananias_hp","Ananias the high priest","Orders Paul struck; leads the prosecution before Felix.",[r"\bAnanias\b"],refs=["ACT 23:2","ACT 24:1"]),
  P("tertullus","Tertullus","Orator retained to prosecute Paul.",[r"\bTertullus\b"]),
- P("felix","Felix","Governor of Judea who keeps Paul in custody two years.",[r"\bFelix\b"]),
- P("drusilla","Drusilla","Jewish wife of Felix, daughter of Agrippa I.",[r"\bDrusilla\b"]),
- P("festus","Porcius Festus","Felix's successor; sends Paul to Caesar.",[r"Porcius Festus",r"\bFestus\b"]),
- P("agrippa2","Agrippa II","King, son of Agrippa I; hears Paul's defense at Caesarea.",[r"\bAgrippa\b"]),
- P("bernice","Bernice","Sister of Agrippa II and of Drusilla.",[r"\bBernice\b"]),
+ P("felix","Felix","Governor of Judea who keeps Paul in custody two years.",[r"\bFelix\b"],kind="official"),
+ P("drusilla","Drusilla","Jewish wife of Felix, daughter of Agrippa I.",[r"\bDrusilla\b"],kind="official"),
+ P("festus","Porcius Festus","Felix's successor; sends Paul to Caesar.",[r"Porcius Festus",r"\bFestus\b"],kind="official"),
+ P("agrippa2","Agrippa II","King, son of Agrippa I; hears Paul's defense at Caesarea.",[r"\bAgrippa\b"],kind="official"),
+ P("bernice","Bernice","Sister of Agrippa II and of Drusilla.",[r"\bBernice\b"],kind="official"),
  P("julius","Julius","Centurion of the Augustan band who escorts Paul to Rome.",[r"\bJulius\b"]),
  P("publius","Publius","Chief man of Malta, whose father Paul heals.",[r"\bPublius\b"]),
 
@@ -154,7 +158,7 @@ PEOPLE = [
  P("stephanas","Stephanas","His household was the first fruits of Achaia; visits Paul at Ephesus.",[r"\bStephanas\b"]),
  P("fortunatus","Fortunatus","Arrives with Stephanas from Corinth.",[r"\bFortunatus\b"]),
  P("achaicus","Achaicus","Arrives with Stephanas from Corinth.",[r"\bAchaicus\b"]),
- P("aretas","Aretas","Nabataean king Aretas IV, whose governor guarded Damascus to seize Paul.",[r"\bAretas\b"]),
+ P("aretas","Aretas","Nabataean king Aretas IV, whose governor guarded Damascus to seize Paul.",[r"\bAretas\b"],kind="official"),
 
  # ---- Philippians, Colossians, Philemon
  P("epaphroditus","Epaphroditus","Envoy of the Philippians who carries their gift, falls gravely ill, and is sent home.",[r"\bEpaphroditus\b"]),
