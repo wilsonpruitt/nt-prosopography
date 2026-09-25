@@ -14,6 +14,7 @@ it has the current state, the editorial decisions already made, and the backlog.
 scripts/fetch_web.sh        # once: download WEB verse-per-line text into web/ (gitignored)
 python3 src/build.py -v     # build dist/index.html; -v prints warnings + attestation report
 python3 tests/shot.py       # Playwright smoke test: phone + desktop, writes tests/shots/*.png
+scripts/sync_genealogies.sh # copy the built Liber generationis site into dist/genealogies/
 ```
 
 `build.py` exits 1 on NO MATCH / EMPTY / OVERLAP / BAD ROLE warnings. Treat those as failures.
@@ -29,6 +30,9 @@ that no entry claims. Each one must be either claimed or knowingly out of scope
   attestation class and co-naming, injects JSON into the template.
 - `src/template.html` : all markup, CSS and JS. `/*DATA*/` is the injection point.
 - `dist/index.html` : built output, committed so it can be opened or deployed as is.
+- `dist/genealogies/` : **not built here.** The *Liber generationis* site (Matthew/Luke genealogies),
+  source in its own repo `~/liber-generationis`; copied in by `scripts/sync_genealogies.sh`.
+  Never edit it in place; CI does not rebuild or check it. Served at `/genealogies/`.
 
 ## Rules that must hold
 
