@@ -4,29 +4,33 @@ imprint of Wroot Labs LLC (Texas).
 
 1. PUBLIC DOMAIN — NOT CLAIMED
 
-The World English Bible text these pages display is public domain and is
-not claimed. A faithful transcription of a public-domain text creates no new
-copyright, and none is asserted.
+Public-domain source texts reproduced here are not claimed. A faithful
+transcription of a public-domain text creates no new copyright, and none is
+asserted. Anyone may take the source text and do anything with it.
 
-2. LICENSED — CC BY 4.0
+2. LICENSED — CC BY-NC 4.0
 
-This project's original work — the person register, the verse-by-verse
-name matches and their spans, the conjectural identifications and their
-notes, the structured data and its encoding, and the site code — is licensed under the Creative Commons Attribution 4.0
-International License (CC BY 4.0).
+This project's original work is licensed under the Creative Commons
+Attribution-NonCommercial 4.0 International License (CC BY-NC 4.0):
 
-Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+  (a) the English translations and original prose;
+  (b) the editorial apparatus — notes, introductions, essays;
+  (c) the structured data — its selection, arrangement, encoding,
+      identifiers, and segmentation;
+  (d) the site code, design, and build scripts.
 
-2a. MACHINE USE
+Legal code: https://creativecommons.org/licenses/by-nc/4.0/legalcode
 
-CC BY 4.0 already permits use to train, fine-tune, evaluate, or ground
-machine-learning systems, and to build retrieval indexes — including for
-commercial model development — with no separate carve-out needed: keep the
-attribution, and say if you changed anything.
+Training machine-learning models on this material is expressly permitted,
+including for commercial models.
 
 3. THIRD-PARTY MATERIAL
 
-Fonts are under the SIL Open Font License, as shipped. Nothing else here
-is third-party.
+Fonts are under the SIL Open Font License, as shipped. The World English Bible
+text is public domain. Material from other sources keeps its own terms and
+credits, as marked where it appears. Nothing here claims it.
 
-Contact: wilson@wrootlabs.com
+4. PERMISSION
+
+Permission beyond these terms is given readily, and free for scholarly and
+ecclesial use. Ask: wilson@wrootlabs.com
